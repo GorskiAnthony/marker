@@ -6,6 +6,16 @@
 	position: relative;
 }
 
+.clusterIcon {
+	background: #a306b6;
+	border: 3px solid #ededed;
+	border-radius: 50%;
+	color: #ededed;
+	height: 40px;
+	line-height: 37px;
+	text-align: center;
+	width: 40px;
+}
 .addButton {
 	position: absolute;
 	top: 10px;

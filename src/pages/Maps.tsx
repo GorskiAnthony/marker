@@ -1,3 +1,4 @@
+import L from "leaflet";
 import { useEffect, useState } from "react";
 import {
 	MapContainer,
@@ -8,6 +9,9 @@ import {
 } from "react-leaflet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMap, faTimes } from "@fortawesome/free-solid-svg-icons";
+
+import MarkerClusterGroup from "react-leaflet-markercluster";
+
 import style from "./Maps.module.css";
 
 interface MarkerData {
@@ -26,6 +30,14 @@ function Maps() {
 	);
 	const [name, setName] = useState("");
 	const [isLoaded, setIsLoaded] = useState(false);
+
+	const createClusterCustomIcon = function (cluster: any) {
+		return L.divIcon({
+			html: `<span>${cluster.getChildCount()}</span>`,
+			className: style.clusterIcon,
+			iconSize: L.point(40, 40, true),
+		});
+	};
 
 	// Récupération des positions des marqueurs depuis l'API
 	useEffect(() => {
@@ -135,17 +147,25 @@ function Maps() {
 
 				{/* Affichage des marqueurs existants avec validation */}
 				{isLoaded && markers.length > 0 ? (
-					markers.map((marker) => (
-						<Marker key={marker.id} position={marker.position}>
-							<Popup>
-								<strong>{marker.title || "Sans titre"}</strong>
-								<br />
-								Latitude: {marker.position[0].toFixed(5)}
-								<br />
-								Longitude: {marker.position[1].toFixed(5)}
-							</Popup>
-						</Marker>
-					))
+					<MarkerClusterGroup
+						showCoverageOnHover={false}
+						spiderfyDistanceMultiplier={2}
+						iconCreateFunction={createClusterCustomIcon}
+					>
+						{markers.map((marker) => (
+							<Marker key={marker.id} position={marker.position}>
+								<Popup>
+									<strong>
+										{marker.title || "Sans titre"}
+									</strong>
+									<br />
+									Latitude: {marker.position[0].toFixed(5)}
+									<br />
+									Longitude: {marker.position[1].toFixed(5)}
+								</Popup>
+							</Marker>
+						))}
+					</MarkerClusterGroup>
 				) : isLoaded ? (
 					<p className={style.noData}>Aucun marqueur trouvé.</p>
 				) : (
